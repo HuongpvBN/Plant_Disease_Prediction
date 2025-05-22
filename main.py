@@ -24,17 +24,17 @@ DATASET_DIR = "/data/huongpham4/tmp_source/Dataset/PlantVillage"
 TRAIN_DIR = "/data/huongpham4/tmp_source/Dataset/Data/train"
 VALID_DIR = "/data/huongpham4/tmp_source/Dataset/Data/val"
 TEST_DIR = "/data/huongpham4/tmp_source/Dataset/Data/test"
-MODEL_PATH = "trained_model_v9.keras"
-HIST_PATH = "training_hist_v9.json"
-ACC_PLOT_PATH = "accuracy_plot_v9.png"
-CM_PLOT_PATH = "confusion_matrix_v9.png"
-F1_SCORE_PLOT_PATH = "F1_score_plot_v9"
-LOSS_PLOT_PATH = "Loss_poth_v9"
-LR_PLOT_PATH = "LR_poth_v9"
+MODEL_PATH = "trained_model_v12.keras"
+HIST_PATH = "training_hist_v12.json"
+ACC_PLOT_PATH = "accuracy_plot_v12.png"
+CM_PLOT_PATH = "confusion_matrix_v12.png"
+F1_SCORE_PLOT_PATH = "F1_score_plot_v12"
+LOSS_PLOT_PATH = "Loss_poth_v12"
+LR_PLOT_PATH = "LR_poth_v12"
 IMG_SIZE = (128, 128)
 BATCH_SIZE = 32
 NUM_CLASSES = 15
-NUM_EPOCHS = 15
+NUM_EPOCHS = 8
 
 # === Utility Functions ===
 import tensorflow as tf
@@ -50,16 +50,16 @@ def get_dataset(directory, batch_size=BATCH_SIZE, img_size=IMG_SIZE, shuffle=Tru
         shuffle=shuffle
     )
     
-    normalization_layer = layers.Rescaling(1/255.0)
+    normalization_layer = layers.Rescaling(1/1.0)
     dataset = dataset.map(lambda x, y: (normalization_layer(x), y))
     
-    # 2. Data augmentation
-    data_augmentation = tf.keras.Sequential([
-        layers.RandomRotation(0.07),             # rotation_range ~ 25 độ (25/360 ≈ 0.07)
-        layers.RandomTranslation(0.05, 0.05),      # width_shift_range và height_shift_range
-        layers.RandomZoom(0.05),                  # Randomly zoom the image by up to 5%
-        layers.RandomFlip("horizontal"),         # Randomly flip the image horizontally (left to right)
-    ])
+    # # 2. Data augmentation
+    # data_augmentation = tf.keras.Sequential([
+    #     layers.RandomRotation(0.07),             # rotation_range ~ 25 độ (25/360 ≈ 0.07)
+    #     layers.RandomTranslation(0.05, 0.05),      # width_shift_range và height_shift_range
+    #     layers.RandomZoom(0.05),                  # Randomly zoom the image by up to 5%
+    #     layers.RandomFlip("horizontal"),         # Randomly flip the image horizontally (left to right)
+    # ])
 
     dataset = dataset.map(lambda x, y: (data_augmentation(x, training=True), y))
     
@@ -94,25 +94,25 @@ def build_cnn(input_shape=(128, 128, 3), num_classes=15):
     model.add(MaxPool2D(pool_size=2, strides=2))
 
     # Block 4
-    model.add(Conv2D(256, kernel_size=3, padding='same'))
-    model.add(BatchNormalization())
-    model.add(tf.keras.layers.Activation('relu'))
-    model.add(Conv2D(256, kernel_size=3))
-    model.add(BatchNormalization())
-    model.add(tf.keras.layers.Activation('relu'))
-    model.add(MaxPool2D(pool_size=2, strides=2))
+    # model.add(Conv2D(256, kernel_size=3, padding='same'))
+    # model.add(BatchNormalization())
+    # model.add(tf.keras.layers.Activation('relu'))
+    # model.add(Conv2D(256, kernel_size=3))
+    # model.add(BatchNormalization())
+    # model.add(tf.keras.layers.Activation('relu'))
+    # model.add(MaxPool2D(pool_size=2, strides=2))
 
-    # Block 5
-    model.add(Conv2D(512, kernel_size=3, padding='same'))
-    model.add(BatchNormalization())
-    model.add(tf.keras.layers.Activation('relu'))
-    model.add(Conv2D(512, kernel_size=3))
-    model.add(BatchNormalization())
-    model.add(tf.keras.layers.Activation('relu'))
-    model.add(MaxPool2D(pool_size=2, strides=2))
+    # # Block 5
+    # model.add(Conv2D(512, kernel_size=3, padding='same'))
+    # model.add(BatchNormalization())
+    # model.add(tf.keras.layers.Activation('relu'))
+    # model.add(Conv2D(512, kernel_size=3))
+    # model.add(BatchNormalization())
+    # model.add(tf.keras.layers.Activation('relu'))
+    # model.add(MaxPool2D(pool_size=2, strides=2))
 
     # Fully connectedSS
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.2))
     model.add(Flatten())
     model.add(Dense(512, activation='relu')) 
     model.add(Dropout(0.4))
@@ -206,7 +206,7 @@ test_set_raw = tf.keras.utils.image_dataset_from_directory(
 )
 CLASS_NAMES = test_set_raw.class_names
 
-test_set = test_set_raw.map(lambda x, y: (tf.cast(x, tf.float32) / 255.0, y))
+test_set = test_set_raw.map(lambda x, y: (tf.cast(x, tf.float32) / 1.0, y))
 
 y_pred = cnn.predict(test_set)
 predicted_categories = tf.argmax(y_pred, axis=1).numpy()
