@@ -52,15 +52,6 @@ def get_dataset(directory, batch_size=BATCH_SIZE, img_size=IMG_SIZE, shuffle=Tru
     
     normalization_layer = layers.Rescaling(1/1.0)
     dataset = dataset.map(lambda x, y: (normalization_layer(x), y))
-    
-    # # 2. Data augmentation
-    # data_augmentation = tf.keras.Sequential([
-    #     layers.RandomRotation(0.07),             # rotation_range ~ 25 độ (25/360 ≈ 0.07)
-    #     layers.RandomTranslation(0.05, 0.05),      # width_shift_range và height_shift_range
-    #     layers.RandomZoom(0.05),                  # Randomly zoom the image by up to 5%
-    #     layers.RandomFlip("horizontal"),         # Randomly flip the image horizontally (left to right)
-    # ])
-
     dataset = dataset.map(lambda x, y: (data_augmentation(x, training=True), y))
     
     return dataset
@@ -92,24 +83,6 @@ def build_cnn(input_shape=(128, 128, 3), num_classes=15):
     model.add(BatchNormalization())
     model.add(tf.keras.layers.Activation('relu'))
     model.add(MaxPool2D(pool_size=2, strides=2))
-
-    # Block 4
-    # model.add(Conv2D(256, kernel_size=3, padding='same'))
-    # model.add(BatchNormalization())
-    # model.add(tf.keras.layers.Activation('relu'))
-    # model.add(Conv2D(256, kernel_size=3))
-    # model.add(BatchNormalization())
-    # model.add(tf.keras.layers.Activation('relu'))
-    # model.add(MaxPool2D(pool_size=2, strides=2))
-
-    # # Block 5
-    # model.add(Conv2D(512, kernel_size=3, padding='same'))
-    # model.add(BatchNormalization())
-    # model.add(tf.keras.layers.Activation('relu'))
-    # model.add(Conv2D(512, kernel_size=3))
-    # model.add(BatchNormalization())
-    # model.add(tf.keras.layers.Activation('relu'))
-    # model.add(MaxPool2D(pool_size=2, strides=2))
 
     # Fully connectedSS
     model.add(Dropout(0.2))

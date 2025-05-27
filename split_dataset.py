@@ -7,7 +7,7 @@ import os
 import shutil
 import random
 
-def split_dataset(full_dir, output_dir, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15):
+def split_dataset(full_dir, output_dir, train_ratio=0.846, val_ratio=0.15, test_ratio=0.004):
     assert train_ratio + val_ratio + test_ratio == 1.0
 
     for class_name in os.listdir(full_dir):
